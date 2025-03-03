@@ -9,7 +9,7 @@ public class InventoryItem : MonoBehaviour
     private Vector2 offset;
     private GridInventorySystem gridInventory;
     private int rotationState = 0;
-    
+
     private Vector2 targetPosition;
     private bool isSnapping = false;
     private float snapSpeed = 10f;
@@ -53,10 +53,29 @@ public class InventoryItem : MonoBehaviour
 
     void Update()
     {
-        
         if (isSnapping)
         {
             SmoothSnapToGrid();
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, shapeLayer);
+
+            if (hit.collider != null && hit.collider.gameObject == gameObject)
+            {
+                StartDrag();
+            }
+        }
+
+        if (isDragging && Input.GetMouseButton(0))
+        {
+            Drag();
+        }
+
+        if (isDragging && Input.GetMouseButtonUp(0))
+        {
+            EndDrag();
         }
 
         if (isDragging)
@@ -80,32 +99,25 @@ public class InventoryItem : MonoBehaviour
         }
     }
 
-    void OnMouseDown()
+    void StartDrag()
     {
         isDragging = true;
         isSnapping = false;
         offset = (Vector2)transform.position - (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
         gridInventory.StartMovingItem(this);
-        
     }
 
-    void OnMouseDrag()
+    void Drag()
     {
-        if (isDragging)
-        {
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            transform.position = mousePosition + offset;
-        }
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        transform.position = mousePosition + offset;
     }
 
-    void OnMouseUp()
+    void EndDrag()
     {
-        if (isDragging)
-        {
-            isDragging = false;
-            targetPosition = gridInventory.SnapToGrid(transform.position);
-            isSnapping = true;
-        }
+        isDragging = false;
+        targetPosition = gridInventory.SnapToGrid(transform.position);
+        isSnapping = true;
     }
 
     void RotateItem()

@@ -50,6 +50,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba32af8b5a95246459dd4618db51a60f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shapeLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  gridLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  childSquaresLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!50 &1891478707454280987
 Rigidbody2D:
   serializedVersion: 4
@@ -93,7 +102,7 @@ CompositeCollider2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_LayerOverridePriority: 1
+  m_LayerOverridePriority: 5
   m_ForceSendLayers:
     serializedVersion: 2
     m_Bits: 4294967295
