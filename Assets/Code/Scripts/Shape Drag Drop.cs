@@ -8,8 +8,6 @@ public class InventoryItem : MonoBehaviour
     private bool isDragging = false;
     private Vector2 offset;
     private GridInventorySystem gridInventory;
-    private bool isFlippedHorizontally = false;
-    private bool isFlippedVertically = false;
 
     void Start()
     {
@@ -51,14 +49,6 @@ public class InventoryItem : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.R))
             {
                 RotateItem();
-            }
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                FlipItemHorizontally();
-            }
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                FlipItemVertically();
             }
         }
     }
@@ -106,36 +96,15 @@ public class InventoryItem : MonoBehaviour
 
     void RotateItem()
     {
-        transform.Rotate(0, 0, -90);
+        transform.Rotate(0, 0, 90);
         List<Vector2> originalOffsets = new List<Vector2>(squareOffsets);
         for (int i = 0; i < squareOffsets.Count; i++)
         {
             squareOffsets[i] = new Vector2(-originalOffsets[i].y, originalOffsets[i].x);
         }
-
-        // Adjust flip flags after rotation
-        if (transform.rotation.eulerAngles.z % 180 != 0)
-        {
-            bool temp = isFlippedHorizontally;
-            isFlippedHorizontally = isFlippedVertically;
-            isFlippedVertically = temp;
-        }
-        RecalculateSquareOffsetsAfterTransform();
     }
 
-    void FlipItemHorizontally()
-    {
-        isFlippedHorizontally = !isFlippedHorizontally;
-        transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
-        RecalculateSquareOffsetsAfterTransform();
-    }
-
-    void FlipItemVertically()
-    {
-        isFlippedVertically = !isFlippedVertically;
-        transform.localScale = new Vector3(transform.localScale.x, -transform.localScale.y, transform.localScale.z);
-        RecalculateSquareOffsetsAfterTransform();
-    }
+    
 
     void RecalculateSquareOffsetsAfterTransform()
     {
