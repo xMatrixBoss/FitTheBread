@@ -44,6 +44,7 @@ public class InventoryItem : MonoBehaviour
         }
     }
 
+<<<<<<< Updated upstream
     void Update()
     {
         if (isDragging)
@@ -63,6 +64,8 @@ public class InventoryItem : MonoBehaviour
         }
     }
 
+=======
+>>>>>>> Stashed changes
     void OnMouseDown()
     {
         isDragging = true;
@@ -102,6 +105,7 @@ public class InventoryItem : MonoBehaviour
         {
             transform.position = gridInventory.SnapToGrid(transform.position);
         }
+<<<<<<< Updated upstream
     }
 
     void RotateItem()
@@ -136,6 +140,9 @@ public class InventoryItem : MonoBehaviour
         transform.localScale = new Vector3(transform.localScale.x, -transform.localScale.y, transform.localScale.z);
         RecalculateSquareOffsetsAfterTransform();
     }
+=======
+    } 
+>>>>>>> Stashed changes
 
     void RecalculateSquareOffsetsAfterTransform()
     {
