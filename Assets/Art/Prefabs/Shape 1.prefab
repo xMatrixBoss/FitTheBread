@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6419323919102388015}
   - component: {fileID: 1891478707454280987}
   - component: {fileID: -7611840283001501455}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Shape 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51,6 +51,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba32af8b5a95246459dd4618db51a60f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shapeLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  gridLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  childSquaresLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!50 &1891478707454280987
 Rigidbody2D:
   serializedVersion: 4
@@ -90,7 +99,7 @@ CompositeCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 193
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -115,7 +124,17 @@ CompositeCollider2D:
   m_GenerationType: 0
   m_EdgeRadius: 0
   m_ColliderPaths:
-  - m_Collider: {fileID: 408098454196968390}
+  - m_Collider: {fileID: 9146392666454313265}
+    m_ColliderPaths:
+    - - X: 15000000
+        Y: 15000000
+      - X: 5000000
+        Y: 15000000
+      - X: 5000000
+        Y: 5000000
+      - X: 15000000
+        Y: 5000000
+  - m_Collider: {fileID: 8186610035964538066}
     m_ColliderPaths:
     - - X: 15000000
         Y: -5000000
@@ -125,7 +144,27 @@ CompositeCollider2D:
         Y: -15000000
       - X: 15000000
         Y: -15000000
-  - m_Collider: {fileID: 8186610035964538066}
+  - m_Collider: {fileID: 3290669422516217374}
+    m_ColliderPaths:
+    - - X: 5000000
+        Y: -5000000
+      - X: -5000000
+        Y: -5000000
+      - X: -5000000
+        Y: -15000000
+      - X: 5000000
+        Y: -15000000
+  - m_Collider: {fileID: 408098454196968390}
+    m_ColliderPaths:
+    - - X: 5000000
+        Y: 15000000
+      - X: -5000000
+        Y: 15000000
+      - X: -5000000
+        Y: 5000000
+      - X: 5000000
+        Y: 5000000
+  - m_Collider: {fileID: 2742351868494123431}
     m_ColliderPaths:
     - - X: 5000000
         Y: 5000000
@@ -135,46 +174,16 @@ CompositeCollider2D:
         Y: -5000000
       - X: 5000000
         Y: -5000000
-  - m_Collider: {fileID: 9146392666454313265}
-    m_ColliderPaths:
-    - - X: 15000000
-        Y: 5000000
-      - X: 5000000
-        Y: 5000000
-      - X: 5000000
-        Y: -5000000
-      - X: 15000000
-        Y: -5000000
-  - m_Collider: {fileID: 3290669422516217374}
-    m_ColliderPaths:
-    - - X: -5000000
-        Y: 5000000
-      - X: -15000000
-        Y: 5000000
-      - X: -15000000
-        Y: -5000000
-      - X: -5000000
-        Y: -5000000
-  - m_Collider: {fileID: 2742351868494123431}
-    m_ColliderPaths:
-    - - X: -5000000
-        Y: -5000000
-      - X: -15000000
-        Y: -5000000
-      - X: -15000000
-        Y: -15000000
-      - X: -5000000
-        Y: -15000000
   m_CompositePaths:
     m_Paths:
-    - - {x: -0.5000293, y: -1.5}
-      - {x: -0.49997061, y: -0.5}
-      - {x: 0.5, y: -0.5000294}
-      - {x: 0.5000293, y: -1.5}
-      - {x: 1.5, y: -1.4999707}
-      - {x: 1.4999707, y: 0.5}
-      - {x: -1.5, y: 0.4999707}
-      - {x: -1.4999707, y: -1.5}
+    - - {x: 1.4999707, y: -1.5}
+      - {x: 1.4999707, y: -0.5}
+      - {x: 0.5, y: -0.49997061}
+      - {x: 0.5000294, y: 0.5}
+      - {x: 1.5, y: 0.5000293}
+      - {x: 1.4999707, y: 1.5}
+      - {x: -0.5, y: 1.4999707}
+      - {x: -0.4999707, y: -1.5}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
@@ -193,11 +202,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.z
@@ -264,7 +273,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.z
@@ -327,11 +336,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.z
@@ -394,11 +403,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.z
@@ -461,11 +470,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6030364499729676184, guid: 81562b71690280545a9eb5557c47a322, type: 3}
       propertyPath: m_LocalPosition.z
