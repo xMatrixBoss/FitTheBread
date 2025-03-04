@@ -1,5 +1,13 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Art/Prefabs/Shape 10.prefab.meta
 guid: 59dfbc190ea64114985f4a8dad73806f
+========
+<<<<<<<< Updated upstream:Assets/Art/Prefabs/Shape Container 3.prefab.meta
+guid: da6ca795f4be64647a5b460b8dfa7a57
+========
+guid: 59dfbc190ea64114985f4a8dad73806f
+>>>>>>>> Stashed changes:Assets/Art/Prefabs/Shape 10.prefab.meta
+>>>>>>>> 2275de3 (1st  prototype):Assets/Art/Prefabs/Shape Container 3.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 
