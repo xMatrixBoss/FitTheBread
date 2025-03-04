@@ -11,8 +11,13 @@ GameObject:
   - component: {fileID: 6030364499729676184}
   - component: {fileID: 6761446546213645317}
   - component: {fileID: 8080209927219855043}
+<<<<<<< Updated upstream
   - component: {fileID: -2228302681469480253}
   m_Layer: 0
+=======
+  - component: {fileID: 1926580977857661031}
+  m_Layer: 6
+>>>>>>> Stashed changes
   m_Name: ObjectSquare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76,7 +81,11 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+<<<<<<< Updated upstream
   m_Color: {r: 1, g: 0.52661633, b: 0, a: 1}
+=======
+  m_Color: {r: 0.33876655, g: 0.14898533, b: 0.5849056, a: 0.39215687}
+>>>>>>> Stashed changes
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -131,7 +140,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2, y: 2}
   m_EdgeRadius: 0
---- !u!114 &-2228302681469480253
+--- !u!114 &1926580977857661031
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

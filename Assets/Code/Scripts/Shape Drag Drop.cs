@@ -5,7 +5,7 @@ using UnityEngine;
 public class InventoryItem : MonoBehaviour
 {
     private List<Vector2> squareOffsets = new List<Vector2>();
-    private bool isDragging = false;
+    public bool isDragging = false;
     private Vector2 offset;
     private GridInventorySystem gridInventory;
     private bool isFlippedHorizontally = false;
@@ -82,6 +82,7 @@ public class InventoryItem : MonoBehaviour
         }
     }
 
+<<<<<<< Updated upstream
     void OnMouseUp()
     {
         if (isDragging)
@@ -106,7 +107,28 @@ public class InventoryItem : MonoBehaviour
             transform.position = gridInventory.SnapToGrid(transform.position);
         }
 <<<<<<< Updated upstream
+=======
+    void EndDrag()
+{
+    isDragging = false;
+    
+    Vector2 snappedPosition = gridInventory.SnapToGrid(transform.position);
+    float distanceToSnap = Vector2.Distance(transform.position, snappedPosition);
+    
+    float snapThreshold = 1f; // Adjust this threshold as needed
+
+    if (distanceToSnap <= snapThreshold)
+    {
+        targetPosition = snappedPosition;
+        isSnapping = true;
+>>>>>>> Stashed changes
     }
+    else
+    {
+        // If too far, allow it to be placed freely
+        gridInventory.RemoveItem(this, GetSquareWorldPositions());
+    }
+}
 
     void RotateItem()
     {
@@ -117,6 +139,7 @@ public class InventoryItem : MonoBehaviour
             squareOffsets[i] = new Vector2(-originalOffsets[i].y, originalOffsets[i].x);
         }
 
+<<<<<<< Updated upstream
         // Adjust flip flags after rotation
         if (transform.rotation.eulerAngles.z % 180 != 0)
         {
@@ -125,10 +148,18 @@ public class InventoryItem : MonoBehaviour
             isFlippedVertically = temp;
         }
         RecalculateSquareOffsetsAfterTransform();
+=======
+        List<Vector2> newWorldPositions = GetSquareWorldPositions();
+        // Skip the check for placement and directly place the item.
+        gridInventory.PlaceItem(this, newWorldPositions);
+>>>>>>> Stashed changes
     }
 
-    void FlipItemHorizontally()
+  void FlipItemHorizontally()
+{
+    if (rotationState % 2 != 0) // Allow flipping only when at 0 or 180 degrees
     {
+<<<<<<< Updated upstream
         isFlippedHorizontally = !isFlippedHorizontally;
         transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
         RecalculateSquareOffsetsAfterTransform();
@@ -162,7 +193,28 @@ public class InventoryItem : MonoBehaviour
         {
             squareOffsets[i] -= centerPoint;
         }
+=======
+        Debug.Log("Flipping is only allowed at 0 or 180 degrees.");
+        return;
+>>>>>>> Stashed changes
     }
+
+    gridInventory.RemoveItem(this, GetSquareWorldPositions());
+    List<Vector2> originalOffsets = new List<Vector2>(squareOffsets);
+
+    for (int i = 0; i < squareOffsets.Count; i++)
+    {
+        squareOffsets[i] = new Vector2(-originalOffsets[i].x, originalOffsets[i].y);
+    }
+
+    List<Vector2> newWorldPositions = GetSquareWorldPositions();
+
+    // Flip the item's scale horizontally
+    Vector3 newScale = transform.localScale;
+    newScale.x *= -1;
+    transform.localScale = newScale;
+    gridInventory.PlaceItem(this, newWorldPositions);
+}
 
     public List<Vector2> GetSquareWorldPositions()
     {
