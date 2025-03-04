@@ -910,6 +910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81dbe122c5c4a4d41bf4013859fef588, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timerText: {fileID: 451663748}
 --- !u!1001 &480324287
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -85,11 +85,16 @@ public class GridInventorySystem : MonoBehaviour
 
     public void PlaceItem(InventoryItem item, List<Vector2> squareWorldPositions)
     {
+        // Remove the item from the previous positions before placing in the new ones
+        RemoveItem(item, itemOccupiedCells.ContainsKey(item) ? itemOccupiedCells[item] : new List<Vector2>());
+        
         itemOccupiedCells[item] = new List<Vector2>();
+
         foreach (Vector2 pos in squareWorldPositions)
         {
             int gridX = Mathf.RoundToInt((pos.x - gridCenter.x) / cellSize);
             int gridY = Mathf.RoundToInt((pos.y - gridCenter.y) / cellSize);
+            
             if (gridX >= 0 && gridY >= 0 && gridX < gridWidth && gridY < gridHeight)
             {
                 gridSpaces[gridX, gridY].Add(item);
@@ -103,17 +108,18 @@ public class GridInventorySystem : MonoBehaviour
     {
         if (itemOccupiedCells.ContainsKey(item))
         {
-            foreach (Vector2 pos in squareWorldPositions)
+            foreach (Vector2 pos in itemOccupiedCells[item]) // Use stored positions
             {
                 int gridX = Mathf.RoundToInt((pos.x - gridCenter.x) / cellSize);
                 int gridY = Mathf.RoundToInt((pos.y - gridCenter.y) / cellSize);
+                
                 if (gridX >= 0 && gridY >= 0 && gridX < gridWidth && gridY < gridHeight)
                 {
                     gridSpaces[gridX, gridY].Remove(item);
                     UpdateGridCellColor(gridX, gridY);
                 }
             }
-            itemOccupiedCells.Remove(item);
+            itemOccupiedCells.Remove(item); // Ensure complete removal
         }
     }
 

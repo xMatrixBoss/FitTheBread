@@ -114,11 +114,25 @@ public class InventoryItem : MonoBehaviour
     }
 
     void EndDrag()
+{
+    isDragging = false;
+    
+    Vector2 snappedPosition = gridInventory.SnapToGrid(transform.position);
+    float distanceToSnap = Vector2.Distance(transform.position, snappedPosition);
+    
+    float snapThreshold = 1f; // Adjust this threshold as needed
+
+    if (distanceToSnap <= snapThreshold)
     {
-        isDragging = false;
-        targetPosition = gridInventory.SnapToGrid(transform.position);
+        targetPosition = snappedPosition;
         isSnapping = true;
     }
+    else
+    {
+        // If too far, allow it to be placed freely
+        gridInventory.RemoveItem(this, GetSquareWorldPositions());
+    }
+}
 
     void RotateItem()
     {
@@ -133,17 +147,12 @@ public class InventoryItem : MonoBehaviour
         }
 
         List<Vector2> newWorldPositions = GetSquareWorldPositions();
+        // Skip the check for placement and directly place the item.
         gridInventory.PlaceItem(this, newWorldPositions);
     }
 
     void FlipItemHorizontally()
     {
-        if (rotationState != 0 && rotationState != 2)
-        {
-            Debug.Log("Flipping is only allowed at 0° or 180° rotation.");
-            return;
-        }
-
         gridInventory.RemoveItem(this, GetSquareWorldPositions());
         List<Vector2> originalOffsets = new List<Vector2>(squareOffsets);
 
@@ -154,18 +163,11 @@ public class InventoryItem : MonoBehaviour
 
         List<Vector2> newWorldPositions = GetSquareWorldPositions();
 
-        if (gridInventory.CanPlaceItem(newWorldPositions))
-        {
-            Vector3 newScale = transform.localScale;
-            newScale.x *= -1;
-            transform.localScale = newScale;
-            gridInventory.PlaceItem(this, newWorldPositions);
-        }
-        else
-        {
-            squareOffsets = originalOffsets;
-            Debug.Log("Cannot flip here. Invalid position.");
-        }
+        // Remove the check for placement and directly flip and place the item.
+        Vector3 newScale = transform.localScale;
+        newScale.x *= -1;
+        transform.localScale = newScale;
+        gridInventory.PlaceItem(this, newWorldPositions);
     }
 
     public List<Vector2> GetSquareWorldPositions()
