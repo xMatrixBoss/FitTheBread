@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Art/Prefabs/Shape 4.prefab.meta
 guid: 72f3bdf3b1fdbb343b37fe6489627403
+========
+guid: 2587468c5893ada41b99a5f4e0db05bc
+>>>>>>>> exp:Assets/Art/Prefabs/Shape 3.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 
