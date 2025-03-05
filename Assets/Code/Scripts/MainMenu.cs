@@ -31,9 +31,12 @@ public class MainMenu : MonoBehaviour
     }
 
     // Quit the game
-    public void ExitGame()
+        public void QuitGame()
     {
-        Debug.Log("Exiting Game...");
-        Application.Quit();
+        #if UNITY_WEBGL
+            Application.OpenURL("https://itch.io/");
+        #else
+            Application.Quit(); // For other platforms
+        #endif
     }
 }

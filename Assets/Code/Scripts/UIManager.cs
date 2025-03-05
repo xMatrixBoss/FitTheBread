@@ -39,11 +39,14 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void ExitGame()
-    {
-        Debug.Log("Exiting Game...");
-        Application.Quit();
-    }
+    public void QuitGame()
+{
+    #if UNITY_WEBGL
+        Application.OpenURL("https://itch.io/");
+    #else
+        Application.Quit(); // For other platforms
+    #endif
+}
 
     public void LoadMainMenu()
     {
