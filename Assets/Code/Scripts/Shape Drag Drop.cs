@@ -57,7 +57,9 @@ public class InventoryItem : MonoBehaviour
         isSnapping = false;
         offset = (Vector2)transform.position - (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
         gridInventory.StartMovingItem(this);
+        AudioManager.Instance.PlayShapePickUp();
     }
+
 
     void Drag()
     {
@@ -72,12 +74,15 @@ public class InventoryItem : MonoBehaviour
         {
             targetPosition = snappedPosition;
             isSnapping = true;
+            AudioManager.Instance.PlayShapePlace();
         }
         else
         {
             gridInventory.RemoveItem(this, GetSquareWorldPositions());
         }
     }
+
+
 
     void SmoothSnapToGrid()
     {
@@ -103,11 +108,12 @@ public class InventoryItem : MonoBehaviour
         }
 
         gridInventory.PlaceItem(this, GetSquareWorldPositions());
+        AudioManager.Instance.PlayShapeRotate();
     }
 
     void FlipItemHorizontally()
     {
-        if (rotationState % 2 != 0) // Allow flipping only when at 0 or 180 degrees
+        if (rotationState % 2 != 0)
         {
             Debug.Log("Flipping is only allowed at 0 or 180 degrees.");
             return;
@@ -120,8 +126,9 @@ public class InventoryItem : MonoBehaviour
         }
         transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
         gridInventory.PlaceItem(this, GetSquareWorldPositions());
-    }
 
+        AudioManager.Instance.PlayShapeFlip();
+    }
     void CalculateSquareOffsets()
     {
         ItemSquare[] squares = GetComponentsInChildren<ItemSquare>();

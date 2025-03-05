@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
 public class UIManager : MonoBehaviour
 {
     public GameObject menuPanel; // Assign the menu panel in the Inspector
@@ -26,9 +25,16 @@ public class UIManager : MonoBehaviour
             bool isMenuActive = !menuPanel.activeSelf;
             menuPanel.SetActive(isMenuActive);
 
+            // Pause timer when menu is active, resume when hidden
             if (timer != null)
             {
-                timer.ToggleTimer(isMenuActive); // Pause when menu is active, resume when hidden
+                timer.ToggleTimer(isMenuActive);
+            }
+
+            // Adjust background music volume when menu is toggled
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.ToggleMenuMusic(isMenuActive);
             }
         }
     }

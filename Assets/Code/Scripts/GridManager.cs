@@ -151,16 +151,18 @@ public class GridInventorySystem : MonoBehaviour
         {
             if (cell.Count == 0) return;
         }
-        
+
         InventoryItem[] items = FindObjectsOfType<InventoryItem>();
         foreach (var item in items)
         {
             if (item.isDragging) return;
         }
-        
+
         timer.ToggleTimer(true);
         winScreen.SetActive(true);
         winTimeText.text = $"Your time: {timer.GetElapsedTime()}";
+
+        AudioManager.Instance.PlayWinSound();
     }
 
     IEnumerator ValidateGridState()
