@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using TMPro;
 
 public class GridInventorySystem : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class GridInventorySystem : MonoBehaviour
     public float cellSize = 1f;
     public Vector2 gridCenter = Vector2.zero;
     public GameObject gridCellPrefab;
+    public GameObject winScreen;
+    public TextMeshProUGUI winTimeText;
+    private Timer timer;
 
     public Color freeColor = Color.white;
     public Color occupiedColor = Color.red;
@@ -22,6 +26,7 @@ public class GridInventorySystem : MonoBehaviour
         InitializeGrid();
         CreateGridVisuals();
         StartCoroutine(ValidateGridState());
+        timer = FindObjectOfType<Timer>();
     }
 
     void InitializeGrid()
@@ -85,7 +90,6 @@ public class GridInventorySystem : MonoBehaviour
 
     public void PlaceItem(InventoryItem item, List<Vector2> squareWorldPositions)
     {
-        // Remove the item from the previous positions before placing in the new ones
         RemoveItem(item, itemOccupiedCells.ContainsKey(item) ? itemOccupiedCells[item] : new List<Vector2>());
         
         itemOccupiedCells[item] = new List<Vector2>();
@@ -102,13 +106,14 @@ public class GridInventorySystem : MonoBehaviour
                 UpdateGridCellColor(gridX, gridY);
             }
         }
+        CheckWinCondition();
     }
 
     public void RemoveItem(InventoryItem item, List<Vector2> squareWorldPositions)
     {
         if (itemOccupiedCells.ContainsKey(item))
         {
-            foreach (Vector2 pos in itemOccupiedCells[item]) // Use stored positions
+            foreach (Vector2 pos in itemOccupiedCells[item])
             {
                 int gridX = Mathf.RoundToInt((pos.x - gridCenter.x) / cellSize);
                 int gridY = Mathf.RoundToInt((pos.y - gridCenter.y) / cellSize);
@@ -119,7 +124,7 @@ public class GridInventorySystem : MonoBehaviour
                     UpdateGridCellColor(gridX, gridY);
                 }
             }
-            itemOccupiedCells.Remove(item); // Ensure complete removal
+            itemOccupiedCells.Remove(item);
         }
     }
 
@@ -138,6 +143,24 @@ public class GridInventorySystem : MonoBehaviour
     bool IsCellOccupied(int x, int y)
     {
         return gridSpaces[x, y].Count > 0;
+    }
+
+    void CheckWinCondition()
+    {
+        foreach (var cell in gridSpaces)
+        {
+            if (cell.Count == 0) return;
+        }
+        
+        InventoryItem[] items = FindObjectsOfType<InventoryItem>();
+        foreach (var item in items)
+        {
+            if (item.isDragging) return;
+        }
+        
+        timer.ToggleTimer(true);
+        winScreen.SetActive(true);
+        winTimeText.text = $"Your time: {timer.GetElapsedTime()}";
     }
 
     IEnumerator ValidateGridState()

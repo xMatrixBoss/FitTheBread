@@ -1,22 +1,20 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryItem : MonoBehaviour
 {
     private List<Vector2> squareOffsets = new List<Vector2>();
-    private bool isDragging = false;
+    public bool isDragging = false;
     private Vector2 offset;
     private GridInventorySystem gridInventory;
-    private int rotationState = 0;
-
     private Vector2 targetPosition;
     private bool isSnapping = false;
-    private float snapSpeed = 10f;
+    private int rotationState = 0;
+    private const float snapSpeed = 10f;
 
     public LayerMask shapeLayer;
-    public LayerMask gridLayer;
-    public LayerMask childSquaresLayer;
+
+    public bool IsDragging => isDragging;
 
     void Start()
     {
@@ -25,66 +23,59 @@ public class InventoryItem : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("Shape");
     }
 
-    void CalculateSquareOffsets()
-    {
-        ItemSquare[] squares = GetComponentsInChildren<ItemSquare>();
-        if (squares.Length == 0)
-        {
-            Debug.LogError("No ItemSquare components found in children!");
-            return;
-        }
-
-        squareOffsets.Clear();
-        Vector2 centerPoint = Vector2.zero;
-
-        foreach (ItemSquare square in squares)
-        {
-            squareOffsets.Add((Vector2)square.transform.localPosition);
-            centerPoint += (Vector2)square.transform.localPosition;
-        }
-
-        centerPoint /= squares.Length;
-
-        for (int i = 0; i < squareOffsets.Count; i++)
-        {
-            squareOffsets[i] -= centerPoint;
-        }
-    }
-
     void Update()
     {
         if (isSnapping)
-        {
             SmoothSnapToGrid();
-        }
 
         if (Input.GetMouseButtonDown(0))
-        {
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, shapeLayer);
-
-            if (hit.collider != null && hit.collider.gameObject == gameObject)
-            {
-                StartDrag();
-            }
-        }
-
-        if (isDragging && Input.GetMouseButton(0))
-        {
+            TryStartDrag();
+        else if (isDragging && Input.GetMouseButton(0))
             Drag();
-        }
-
-        if (isDragging && Input.GetMouseButtonUp(0))
-        {
+        else if (isDragging && Input.GetMouseButtonUp(0))
             EndDrag();
-        }
 
         if (isDragging)
         {
             if (Input.GetKeyDown(KeyCode.R))
                 RotateItem();
-
             if (Input.GetKeyDown(KeyCode.F))
                 FlipItemHorizontally();
+        }
+    }
+
+    void TryStartDrag()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, shapeLayer);
+        if (hit.collider != null && hit.collider.gameObject == gameObject)
+            StartDrag();
+    }
+
+    void StartDrag()
+    {
+        isDragging = true;
+        isSnapping = false;
+        offset = (Vector2)transform.position - (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        gridInventory.StartMovingItem(this);
+    }
+
+    void Drag()
+    {
+        transform.position = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition) + offset;
+    }
+
+    void EndDrag()
+    {
+        isDragging = false;
+        Vector2 snappedPosition = gridInventory.SnapToGrid(transform.position);
+        if (Vector2.Distance(transform.position, snappedPosition) <= 1f)
+        {
+            targetPosition = snappedPosition;
+            isSnapping = true;
+        }
+        else
+        {
+            gridInventory.RemoveItem(this, GetSquareWorldPositions());
         }
     }
 
@@ -99,41 +90,6 @@ public class InventoryItem : MonoBehaviour
         }
     }
 
-    void StartDrag()
-    {
-        isDragging = true;
-        isSnapping = false;
-        offset = (Vector2)transform.position - (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        gridInventory.StartMovingItem(this);
-    }
-
-    void Drag()
-    {
-        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = mousePosition + offset;
-    }
-
-    void EndDrag()
-{
-    isDragging = false;
-    
-    Vector2 snappedPosition = gridInventory.SnapToGrid(transform.position);
-    float distanceToSnap = Vector2.Distance(transform.position, snappedPosition);
-    
-    float snapThreshold = 1f; // Adjust this threshold as needed
-
-    if (distanceToSnap <= snapThreshold)
-    {
-        targetPosition = snappedPosition;
-        isSnapping = true;
-    }
-    else
-    {
-        // If too far, allow it to be placed freely
-        gridInventory.RemoveItem(this, GetSquareWorldPositions());
-    }
-}
-
     void RotateItem()
     {
         gridInventory.RemoveItem(this, GetSquareWorldPositions());
@@ -146,37 +102,51 @@ public class InventoryItem : MonoBehaviour
             squareOffsets[i] = new Vector2(-originalOffsets[i].y, originalOffsets[i].x);
         }
 
-        List<Vector2> newWorldPositions = GetSquareWorldPositions();
-        // Skip the check for placement and directly place the item.
-        gridInventory.PlaceItem(this, newWorldPositions);
+        gridInventory.PlaceItem(this, GetSquareWorldPositions());
     }
 
     void FlipItemHorizontally()
     {
-        gridInventory.RemoveItem(this, GetSquareWorldPositions());
-        List<Vector2> originalOffsets = new List<Vector2>(squareOffsets);
-
-        for (int i = 0; i < squareOffsets.Count; i++)
+        if (rotationState % 2 != 0) // Allow flipping only when at 0 or 180 degrees
         {
-            squareOffsets[i] = new Vector2(-originalOffsets[i].x, originalOffsets[i].y);
+            Debug.Log("Flipping is only allowed at 0 or 180 degrees.");
+            return;
         }
 
-        List<Vector2> newWorldPositions = GetSquareWorldPositions();
+        gridInventory.RemoveItem(this, GetSquareWorldPositions());
+        for (int i = 0; i < squareOffsets.Count; i++)
+        {
+            squareOffsets[i] = new Vector2(-squareOffsets[i].x, squareOffsets[i].y);
+        }
+        transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+        gridInventory.PlaceItem(this, GetSquareWorldPositions());
+    }
 
-        // Remove the check for placement and directly flip and place the item.
-        Vector3 newScale = transform.localScale;
-        newScale.x *= -1;
-        transform.localScale = newScale;
-        gridInventory.PlaceItem(this, newWorldPositions);
+    void CalculateSquareOffsets()
+    {
+        ItemSquare[] squares = GetComponentsInChildren<ItemSquare>();
+        if (squares.Length == 0)
+        {
+            Debug.LogError("No ItemSquare components found in children!");
+            return;
+        }
+
+        squareOffsets.Clear();
+        Vector2 centerPoint = Vector2.zero;
+        foreach (ItemSquare square in squares)
+            centerPoint += (Vector2)square.transform.localPosition;
+
+        centerPoint /= squares.Length;
+
+        foreach (ItemSquare square in squares)
+            squareOffsets.Add((Vector2)square.transform.localPosition - centerPoint);
     }
 
     public List<Vector2> GetSquareWorldPositions()
     {
         List<Vector2> worldPositions = new List<Vector2>();
         foreach (Vector2 offset in squareOffsets)
-        {
             worldPositions.Add((Vector2)transform.position + offset);
-        }
         return worldPositions;
     }
 }
