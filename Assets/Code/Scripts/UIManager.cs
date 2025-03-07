@@ -25,16 +25,9 @@ public class UIManager : MonoBehaviour
             bool isMenuActive = !menuPanel.activeSelf;
             menuPanel.SetActive(isMenuActive);
 
-            // Pause timer when menu is active, resume when hidden
             if (timer != null)
             {
                 timer.ToggleTimer(isMenuActive);
-            }
-
-            // Adjust background music volume when menu is toggled
-            if (AudioManager.Instance != null)
-            {
-                AudioManager.Instance.ToggleMenuMusic(isMenuActive);
             }
         }
     }
