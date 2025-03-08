@@ -1,6 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour
@@ -28,6 +28,7 @@ public class AudioManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to scene load event
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -39,11 +40,25 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        // Load saved volume settings or set default values
+        LoadVolumeSettings();
+        PlayMusic();
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded; // Unsubscribe when destroyed
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        PlayMusic(); // Restart music on each level load
+    }
+
+    private void LoadVolumeSettings()
+    {
         musicSource.volume = PlayerPrefs.GetFloat("MusicVolume", 1f);
         sfxSource.volume = PlayerPrefs.GetFloat("SFXVolume", 1f);
 
-        // Initialize sliders
         if (musicSlider != null)
         {
             musicSlider.value = musicSource.volume;
@@ -54,18 +69,23 @@ public class AudioManager : MonoBehaviour
             sfxSlider.value = sfxSource.volume;
             sfxSlider.onValueChanged.AddListener(SetSFXVolume);
         }
-
-        PlayMusic();
     }
 
     public void PlayMusic()
     {
-        if (!musicSource.isPlaying)
+        if (musicSource.isPlaying)
         {
-            musicSource.clip = bgMusic;
-            musicSource.loop = true;
-            musicSource.Play();
+            musicSource.Stop(); // Ensure the previous music stops before playing again
         }
+
+        musicSource.clip = bgMusic;
+        musicSource.loop = true;
+        musicSource.Play();
+    }
+
+    public void StopMusic()
+    {
+        musicSource.Stop();
     }
 
     public void SetMusicVolume(float volume)
@@ -83,16 +103,32 @@ public class AudioManager : MonoBehaviour
     }
 
     public void PlaySFX(AudioClip clip)
-{
-    if (clip != null)
     {
-        sfxSource.PlayOneShot(clip);
+        if (clip != null)
+        {
+            sfxSource.PlayOneShot(clip);
+        }
     }
-}
 
     public void PlayShapePickUp() => PlaySFX(shapePickUp);
     public void PlayShapePlace() => PlaySFX(shapePlace);
     public void PlayShapeRotate() => PlaySFX(shapeRotate);
     public void PlayShapeFlip() => PlaySFX(shapeFlip);
-    public void PlayWinSound() => PlaySFX(winSound);
+
+    public void PlayWinSound()
+    {
+        if (musicSource.isPlaying)
+        {
+            musicSource.Pause();
+        }
+
+        sfxSource.PlayOneShot(winSound);
+        StartCoroutine(ResumeMusicAfterWinSound(winSound.length));
+    }
+
+    private IEnumerator ResumeMusicAfterWinSound(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        musicSource.UnPause();
+    }
 }
