@@ -5,20 +5,24 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public GameObject helpPanel; // Assign the Help Panel in the Inspector
+    public GameObject helpPanel; 
 
     void Start()
     {
         if (helpPanel != null)
         {
-            helpPanel.SetActive(false); // Ensure Help Panel starts hidden
+            helpPanel.SetActive(false); 
         }
     }
 
-    // Load the level scene using scene index (1)
+
     public void PlayGame()
     {
-        SceneManager.LoadScene(1); // Scene index 1 should be your level scene
+        SceneManager.LoadScene(1); 
+    }
+    public void PlayMobile()
+    {
+        SceneManager.LoadScene(2); 
     }
 
     // Toggle the Help Panel on/off
@@ -31,9 +35,12 @@ public class MainMenu : MonoBehaviour
     }
 
     // Quit the game
-    public void ExitGame()
+        public void QuitGame()
     {
-        Debug.Log("Exiting Game...");
-        Application.Quit();
+        #if UNITY_WEBGL
+            Application.OpenURL("https://itch.io/");
+        #else
+            Application.Quit(); // For other platforms
+        #endif
     }
 }

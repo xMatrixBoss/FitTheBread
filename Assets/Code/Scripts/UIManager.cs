@@ -25,25 +25,21 @@ public class UIManager : MonoBehaviour
             bool isMenuActive = !menuPanel.activeSelf;
             menuPanel.SetActive(isMenuActive);
 
-            // Pause timer when menu is active, resume when hidden
             if (timer != null)
             {
                 timer.ToggleTimer(isMenuActive);
             }
-
-            // Adjust background music volume when menu is toggled
-            if (AudioManager.Instance != null)
-            {
-                AudioManager.Instance.ToggleMenuMusic(isMenuActive);
-            }
         }
     }
 
-    public void ExitGame()
-    {
-        Debug.Log("Exiting Game...");
-        Application.Quit();
-    }
+    public void QuitGame()
+{
+    #if UNITY_WEBGL
+        Application.OpenURL("https://itch.io/");
+    #else
+        Application.Quit(); // For other platforms
+    #endif
+}
 
     public void LoadMainMenu()
     {

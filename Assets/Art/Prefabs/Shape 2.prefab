@@ -55,6 +55,8 @@ MonoBehaviour:
   shapeLayer:
     serializedVersion: 2
     m_Bits: 8
+  rotateButton: {fileID: 8977971394788947936, guid: a7394af522bdee14eb3c8dc23b5563f6, type: 3}
+  flipButton: {fileID: 7519475319349166445, guid: 619396a382e99824786568b2921e9e5d, type: 3}
 --- !u!50 &1891478707454280987
 Rigidbody2D:
   serializedVersion: 4

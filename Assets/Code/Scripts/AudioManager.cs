@@ -1,6 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour
 {
@@ -18,15 +19,16 @@ public class AudioManager : MonoBehaviour
     public AudioClip shapeFlip;
     public AudioClip winSound;
 
-    private float defaultMusicVolume;
-    private bool isMusicEnabled = true;
-    private bool isSfxEnabled = true;
+    [Header("UI Sliders")]
+    public Slider musicSlider;
+    public Slider sfxSlider;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to scene load event
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -38,44 +40,71 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        defaultMusicVolume = musicSource.volume;
+        LoadVolumeSettings();
         PlayMusic();
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded; // Unsubscribe when destroyed
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        PlayMusic(); // Restart music on each level load
+    }
+
+    private void LoadVolumeSettings()
+    {
+        musicSource.volume = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        sfxSource.volume = PlayerPrefs.GetFloat("SFXVolume", 1f);
+
+        if (musicSlider != null)
+        {
+            musicSlider.value = musicSource.volume;
+            musicSlider.onValueChanged.AddListener(SetMusicVolume);
+        }
+        if (sfxSlider != null)
+        {
+            sfxSlider.value = sfxSource.volume;
+            sfxSlider.onValueChanged.AddListener(SetSFXVolume);
+        }
     }
 
     public void PlayMusic()
     {
-        if (isMusicEnabled && !musicSource.isPlaying)
+        if (musicSource.isPlaying)
         {
-            musicSource.clip = bgMusic;
-            musicSource.loop = true;
-            musicSource.Play();
+            musicSource.Stop(); // Ensure the previous music stops before playing again
         }
+
+        musicSource.clip = bgMusic;
+        musicSource.loop = true;
+        musicSource.Play();
     }
 
-    public void ToggleMenuMusic(bool isMenuOpen)
+    public void StopMusic()
     {
-        musicSource.volume = isMenuOpen ? defaultMusicVolume * 0.3f : defaultMusicVolume;
+        musicSource.Stop();
     }
 
-    public void ToggleMusic()
+    public void SetMusicVolume(float volume)
     {
-        isMusicEnabled = !isMusicEnabled;
-        musicSource.mute = !isMusicEnabled;
-
-        if (isMusicEnabled)
-            PlayMusic();
-        else
-            musicSource.Stop();
+        musicSource.volume = volume;
+        PlayerPrefs.SetFloat("MusicVolume", volume);
+        PlayerPrefs.Save();
     }
 
-    public void ToggleSFX()
+    public void SetSFXVolume(float volume)
     {
-        isSfxEnabled = !isSfxEnabled;
+        sfxSource.volume = volume;
+        PlayerPrefs.SetFloat("SFXVolume", volume);
+        PlayerPrefs.Save();
     }
 
     public void PlaySFX(AudioClip clip)
     {
-        if (isSfxEnabled && clip != null)
+        if (clip != null)
         {
             sfxSource.PlayOneShot(clip);
         }
@@ -85,7 +114,21 @@ public class AudioManager : MonoBehaviour
     public void PlayShapePlace() => PlaySFX(shapePlace);
     public void PlayShapeRotate() => PlaySFX(shapeRotate);
     public void PlayShapeFlip() => PlaySFX(shapeFlip);
-    public void PlayWinSound() => PlaySFX(winSound);
+
+    public void PlayWinSound()
+    {
+        if (musicSource.isPlaying)
+        {
+            musicSource.Pause();
+        }
+
+        sfxSource.PlayOneShot(winSound);
+        StartCoroutine(ResumeMusicAfterWinSound(winSound.length));
+    }
+
+    private IEnumerator ResumeMusicAfterWinSound(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        musicSource.UnPause();
+    }
 }
-
-

@@ -95,7 +95,7 @@ public class InventoryItem : MonoBehaviour
         }
     }
 
-    void RotateItem()
+    public void RotateItem()
     {
         gridInventory.RemoveItem(this, GetSquareWorldPositions());
         transform.Rotate(0, 0, 90);
@@ -111,7 +111,7 @@ public class InventoryItem : MonoBehaviour
         AudioManager.Instance.PlayShapeRotate();
     }
 
-    void FlipItemHorizontally()
+    public void FlipItemHorizontally()
     {
         if (rotationState % 2 != 0)
         {
